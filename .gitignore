@@ -3,6 +3,7 @@ data/
 notebooks/
 mlruns
 .envrc
+Makefile
 
 
 *.egg-info
