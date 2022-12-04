@@ -1,1 +1,13 @@
 data/
+.env
+notebooks/
+mlruns
+.envrc
+
+
+*.egg-info
+.coverage
+.ipynb_checkpoints
+.DS_Store
+*.csv
+**/__pycache__/
