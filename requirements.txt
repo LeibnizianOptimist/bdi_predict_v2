@@ -12,7 +12,11 @@ matplotlib
 seaborn
 notebook
 
-pytorch
+#Pytorch
+
+torch
+torchvision
+torchaudio
 
 # tests/linter
 black
