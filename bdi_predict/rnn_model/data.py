@@ -4,12 +4,12 @@ import matplotlib.pyplot as plt
 from datetime import timedelta
 
 
-def clean_data(df: pd.DataFrame, to_csv=True ) -> pd.DataFrame:
+def clean_data(to_csv=True) -> pd.DataFrame:
     """
     Taking .csv files stored in the raw_data folder and return a clearned .csv file.
     """
     
-    print("Load data.")
+    print("Loading data.")
     bdi = pd.read_csv("../raw_data/BDI_daily.csv")
     bdi["time"] = pd.to_datetime(bdi["time"], unit="s", origin="unix")
     
@@ -53,7 +53,7 @@ def clean_data(df: pd.DataFrame, to_csv=True ) -> pd.DataFrame:
     
     if to_csv == True :
         
-        print("Data has been cleaned.")
+        print("Data has been cleaned & exported as a .csv file.")
         
         df.to_csv("../data/cleaned_data.csv")
         
