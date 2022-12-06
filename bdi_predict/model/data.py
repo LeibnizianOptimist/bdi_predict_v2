@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from datetime import timedelta
 
 import os
-from bdi_predict.params import BASE_PROJECT_PATH
+from bdi_predict.model.params import BASE_PROJECT_PATH
 
 
 def clean_data(to_csv=True) -> pd.DataFrame:

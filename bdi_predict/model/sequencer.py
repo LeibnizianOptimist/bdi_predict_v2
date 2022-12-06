@@ -1,7 +1,3 @@
-
-
-
-
 class SequenceGenerator():
   def __init__(self, input_width, label_width, shift,
                train_df=train_df, val_df=val_df, test_df=test_df,
