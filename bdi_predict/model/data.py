@@ -6,7 +6,12 @@ from datetime import timedelta
 
 def clean_data(to_csv=True) -> pd.DataFrame:
     """
-    Taking .csv files stored in the raw_data folder and return a clearned .csv file.
+    Function Objective: Takes .csv files stored in the raw_data folder and returns either a clearned .csv file or a pd.DataFrame of the cleaned data. 
+    
+    Note: the target values (log differences of daily BDRY values) are created in this function.
+    
+    Note: The kwarg 'to_csv' takes a boolean value where True would make the function create a .csv file in a certin directory within the project, 
+    whilst the boolean False would return the cleaned data as a pd.DataFrame.
     """
     
     print("Loading data.")
@@ -47,6 +52,7 @@ def clean_data(to_csv=True) -> pd.DataFrame:
     
     
     #Creating the Target, the log difference between dialy BDRY values.
+    
     df["log_BDRY"] = np.log10(df["BDRY"])
     df["target"] = df["log_BDRY"].diff()
     df = df[df["time"] > "2018-03-22"].copy()
