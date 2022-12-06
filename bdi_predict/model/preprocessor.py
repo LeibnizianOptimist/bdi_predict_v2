@@ -28,14 +28,14 @@ def final_preprocess(df:pd.DataFrame) -> TimeseriesGenerator:
         train_ratio = train_val_test_ratio[0]*0.1
         val_ratio = train_val_test_ratio[1]*0.1
         test_ratio = train_val_test_ratio[2]*0.1
-        #val_and_test_ratio = val_ratio + test_ratio
-        assert train_ratio + val_ratio + test_ratio == 1
+        
+        print(round(train_ratio+val_ratio+test_ratio))
         
         
         # TRAIN SET
-        last_train_idex = round(train_ratio * len(df))
+        last_train_index = round(train_ratio * len(df))
         
-        df_train = df.iloc[0:last_train_idex, :]
+        df_train = df.iloc[0:last_train_index, :]
         
         
         # VALDIATION SET
@@ -47,7 +47,7 @@ def final_preprocess(df:pd.DataFrame) -> TimeseriesGenerator:
         df_val = df.iloc[first_val_index:last_val_index, :]
         
         # TEST SET
-        first_test_idx = last_val_index - input_length
+        first_test_idx = last_val_index + 1
         
         df_test = df.iloc[first_test_idx:, :]
 

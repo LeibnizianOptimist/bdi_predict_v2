@@ -78,7 +78,7 @@ def clean_data(to_csv=True) -> pd.DataFrame:
     if to_csv == True :
         
         csv_delivery_path = os.path.join(BASE_PROJECT_PATH, "data", "cleaned_data.csv")
-        df.to_csv(csv_delivery_path)
+        df.to_csv(csv_delivery_path, index=False)
         
         print("Data has been cleaned & exported as a .csv file.")
         return None
