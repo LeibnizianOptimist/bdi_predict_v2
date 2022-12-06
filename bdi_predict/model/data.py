@@ -3,6 +3,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import timedelta
 
+import os
+from bdi_predict.params import BASE_PROJECT_PATH
+
 
 def clean_data(to_csv=True) -> pd.DataFrame:
     """
@@ -15,17 +18,32 @@ def clean_data(to_csv=True) -> pd.DataFrame:
     """
     
     print("Loading data.")
-    bdi = pd.read_csv("../raw_data/BDI_daily.csv")
+    
+     
+    bdi_path =  os.path.join(BASE_PROJECT_PATH, "raw_data", "BDI_daily.csv")
+    bdi = pd.read_csv(bdi_path)
+    bdi["time"].astype(int)
     bdi["time"] = pd.to_datetime(bdi["time"], unit="s", origin="unix")
     
 
-    bdry = pd.read_csv("../raw_data/BDRY_daily.csv")
+    bdry_path = os.path.join(BASE_PROJECT_PATH, "raw_data", "BDRY_daily.csv")
+    bdry = pd.read_csv(bdry_path)
+    bdry["time"].astype(int)
     bdry["time"] = pd.to_datetime(bdry["time"], unit="s", origin="unix")
     
-    
-    for rows in bdry.iterrows():
-        rows["time"] = rows["time"].normalize()
+    #BDRY's datetime values are all of the place inter-day, so I will use the .normalize method to convert all the datetimes to midnight.
 
+    midnight_datetime_list = []    
+    for row in bdry.iterrows():
+        #print(row[1]["time"])
+        midnight_datetime = row[1]["time"].normalize()
+        #print(midnight_datetime)
+        midnight_datetime_list.append(midnight_datetime)
+        
+    bdry["time"] = pd.DataFrame(midnight_datetime_list)
+   
+        
+ 
     bdry.drop(columns=["open",
                        "high",
                        "low",
@@ -59,10 +77,10 @@ def clean_data(to_csv=True) -> pd.DataFrame:
     
     if to_csv == True :
         
+        csv_delivery_path = os.path.join(BASE_PROJECT_PATH, "data", "cleaned_data.csv")
+        df.to_csv(csv_delivery_path)
+        
         print("Data has been cleaned & exported as a .csv file.")
-        
-        df.to_csv("../data/cleaned_data.csv")
-        
         return None
     
     else:
@@ -70,7 +88,10 @@ def clean_data(to_csv=True) -> pd.DataFrame:
         print("Data has been cleaned.")
         
         return df
-
+    
+     
+if __name__ == "__main__":
+    clean_data(to_csv=True)
 
 
 
