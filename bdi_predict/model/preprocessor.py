@@ -51,6 +51,8 @@ def train_val_test_split(df:pd.DataFrame,
     
     df_test = df.iloc[first_test_idx:, :]
     
+    print("Data split into train, validation, and test datasets.")
+    
     return (df_train, df_val, df_test)
 
 
@@ -83,14 +85,14 @@ def min_max_scaler(dfs=Tuple) -> tuple:
     array_val_scaled = scaler.transform(df_val)
     array_test_scaled = scaler.transform(df_test)
     
-    print(column_names_train)
-    print(type(column_names_train))
-    
-    breakpoint()
+    #print(column_names_train)
+    #print(type(column_names_train))
     
     df_train_scaled = pd.DataFrame(array_train_scaled, columns=column_names_train)
     df_val_scaled = pd.DataFrame(array_val_scaled, columns=column_names_val)
     df_test_scaled = pd.DataFrame(array_test_scaled, columns=column_names_test)
+    
+    print("Datasets min-max scaled.")
     
     return (df_train_scaled, df_val_scaled, df_test_scaled)
 

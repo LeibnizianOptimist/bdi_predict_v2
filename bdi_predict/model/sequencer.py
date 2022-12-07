@@ -82,4 +82,4 @@ if __name__ == "__main__":
                                       df_val=df_val,
                                       df_test=df_test, 
                                       target_columns=["target"])
-  repr(sequence_sample)
+  print(repr(sequence_sample))
