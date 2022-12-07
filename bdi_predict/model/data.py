@@ -20,7 +20,7 @@ def clean_data(to_csv=True) -> pd.DataFrame:
     print("Loading data.")
     
      
-    bdi_path =  os.path.join(BASE_PROJECT_PATH, "raw_data", "BDI_daily.csv")
+    bdi_path = os.path.join(BASE_PROJECT_PATH, "raw_data", "BDI_daily.csv")
     bdi = pd.read_csv(bdi_path)
     bdi["time"].astype(int)
     bdi["time"] = pd.to_datetime(bdi["time"], unit="s", origin="unix")

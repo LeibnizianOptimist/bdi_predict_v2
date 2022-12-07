@@ -1,37 +1,83 @@
+import os
+import numpy as np
+import pandas as pd
+
+from bdi_predict.model.params import BASE_PROJECT_PATH
+from bdi_predict.model.preprocessor import train_val_test_split, min_max_scaler
+
 class SequenceGenerator():
-  def __init__(self, input_width, label_width, shift,
-               train_df=train_df, val_df=val_df, test_df=test_df,
-               label_columns=None):
-    # Store the raw data.
-    self.train_df = train_df
-    self.val_df = val_df
-    self.test_df = test_df
+  """
+  
+  """
+  
+  def __init__(self, input_width:int,
+               target_width:int,
+               offset:int,
+               df_train:pd.DataFrame,
+               df_val:pd.DataFrame,
+               df_test:pd.DataFrame,
+               target_columns=None
+               ): 
+    
+    #Stores the data required prior to manipulation via instance methods.
+    
+    self.df_train = df_train
+    self.df_val = df_val
+    self.df_test = df_test
 
-    # Work out the label column indices.
-    self.label_columns = label_columns
-    if label_columns is not None:
-      self.label_columns_indices = {name: i for i, name in
-                                    enumerate(label_columns)}
-    self.column_indices = {name: i for i, name in
-                           enumerate(train_df.columns)}
+    # Work out the target column's index in a given generated Sequence.
+  
+    self.target_columns = target_columns
+    
+    if target_columns is not None:
+      self.target_columns_index = {name: i for i, name in
+                                    enumerate(target_columns)}
 
-    # Work out the window parameters.
+    self.column_index = {name: i for i, name in
+                           enumerate(df_train.columns)}
+    # Work out the sequence parameters.
+    
     self.input_width = input_width
-    self.label_width = label_width
-    self.shift = shift
+    self.target_width = target_width
+    
+    # Otherwise known as shift/horizon. 
+    # The offset represents the gap between the last input value and the target value - TARGET INCLUSIVE.
+  
+    self.offset = offset
 
-    self.total_window_size = input_width + shift
+    self.total_window_size = input_width + offset
 
+  
+  
     self.input_slice = slice(0, input_width)
-    self.input_indices = np.arange(self.total_window_size)[self.input_slice]
+    self.input_index = np.arange(self.total_window_size)[self.input_slice]
 
-    self.label_start = self.total_window_size - self.label_width
-    self.labels_slice = slice(self.label_start, None)
-    self.label_indices = np.arange(self.total_window_size)[self.labels_slice]
+    self.target_start = self.total_window_size - self.target_width
+    self.target_slice = slice(self.target_start, None)
+    self.target_index = np.arange(self.total_window_size)[self.target_slice]
 
   def __repr__(self):
     return '\n'.join([
         f'Total window size: {self.total_window_size}',
-        f'Input indices: {self.input_indices}',
-        f'Label indices: {self.label_indices}',
-        f'Label column name(s): {self.label_columns}'])
+        f'Input indices: {self.input_index}',
+        f'Label indices: {self.target_index}',
+        f'Label column name(s): {self.target_columns}'])
+    
+    
+if __name__ == "__main__":
+  
+  #Importing csv and applying train_val_test_split.
+  df = pd.read_csv(os.path.join(BASE_PROJECT_PATH, "data", "cleaned_data.csv"))
+  dfs = train_val_test_split(df, (7, 2, 1))
+  df_train, df_val, df_test = min_max_scaler(dfs=dfs)
+  
+  
+  #Testing out the SequenceGenerator works by creating an instance of the class
+  sequence_sample = SequenceGenerator(input_width=20,
+                                      target_width=1,
+                                      offset=1,
+                                      df_train=df_train,
+                                      df_val=df_val,
+                                      df_test=df_test, 
+                                      target_columns=["target"])
+  repr(sequence_sample)
