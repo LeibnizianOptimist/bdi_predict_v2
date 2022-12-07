@@ -68,6 +68,7 @@ if __name__ == "__main__":
   
   #Importing csv and applying train_val_test_split.
   df = pd.read_csv(os.path.join(BASE_PROJECT_PATH, "data", "cleaned_data.csv"))
+  df.set_index("time", inplace=True)
   dfs = train_val_test_split(df, (7, 2, 1))
   df_train, df_val, df_test = min_max_scaler(dfs=dfs)
   

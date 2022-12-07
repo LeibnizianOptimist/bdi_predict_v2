@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
-from tensorflow import keras
-from keras.preprocessing.sequence import TimeseriesGenerator
+#from tensorflow import keras
+#from keras.preprocessing.sequence import TimeseriesGenerator
 from sklearn.preprocessing import MinMaxScaler
 
 from typing import Tuple
@@ -80,11 +80,11 @@ def min_max_scaler(dfs=Tuple) -> tuple:
     return (df_train_scaled, df_val_scaled, df_test_scaled)
 
 
-
+""" 
 def final_preprocess(dfs:tuple) -> TimeseriesGenerator:
     """
-    Function Objective: obtains a set of X_predict values stored in a TimeseriesGenerator ready to be passed into our model.
-    """
+    #Function Objective: obtains a set of X_predict values stored in a TimeseriesGenerator ready to be passed into our model.
+"""
     
 
     #Seperating the datasets.
@@ -152,7 +152,7 @@ def final_preprocess(dfs:tuple) -> TimeseriesGenerator:
     return (predict_generator, X20, X20_abs)
     
         
-    
+     """
 
 def train_val_test_split_alt(df:pd.DataFrame,
                         train_val_test_ratio: tuple) -> tuple:
