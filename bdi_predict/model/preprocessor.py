@@ -7,6 +7,8 @@ from sklearn.preprocessing import MinMaxScaler
 from typing import Tuple
 
 
+
+
 def train_val_test_split(df:pd.DataFrame,
                         train_val_test_ratio: tuple) -> tuple:
     """ 
@@ -52,7 +54,6 @@ def train_val_test_split(df:pd.DataFrame,
     return (df_train, df_val, df_test)
 
 
-
 def min_max_scaler(dfs=Tuple) -> tuple:
     """
     MinMaxScaler. The scaler should only be computed using the training data 
@@ -65,17 +66,31 @@ def min_max_scaler(dfs=Tuple) -> tuple:
     df_val = dfs[1]
     df_test = dfs[2]
     
+    
     #Instantiating and fitting the transformer to the training data. 
     
     scaler = MinMaxScaler()
+    
+    column_names_train = scaler.get_feature_names_out(df_train.columns)
+    column_names_val = scaler.get_feature_names_out(df_val.columns)
+    column_names_test = scaler.get_feature_names_out(df_test.columns)
+    
     scaler.fit(df_train)
 
     #Scaling all the datasets. 
         
-    df_train_scaled = scaler.transform(df_train)
-    df_val_scaled = scaler.transform(df_val)
-    df_test_scaled = scaler.transform(df_test)
+    array_train_scaled = scaler.transform(df_train)
+    array_val_scaled = scaler.transform(df_val)
+    array_test_scaled = scaler.transform(df_test)
     
+    print(column_names_train)
+    print(type(column_names_train))
+    
+    breakpoint()
+    
+    df_train_scaled = pd.DataFrame(array_train_scaled, columns=column_names_train)
+    df_val_scaled = pd.DataFrame(array_val_scaled, columns=column_names_val)
+    df_test_scaled = pd.DataFrame(array_test_scaled, columns=column_names_test)
     
     return (df_train_scaled, df_val_scaled, df_test_scaled)
 
