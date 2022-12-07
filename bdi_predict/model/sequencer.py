@@ -5,6 +5,7 @@ import pandas as pd
 from bdi_predict.model.params import BASE_PROJECT_PATH
 from bdi_predict.model.preprocessor import train_val_test_split, min_max_scaler
 
+
 class SequenceGenerator():
   """
   
@@ -81,4 +82,4 @@ if __name__ == "__main__":
                                       df_val=df_val,
                                       df_test=df_test, 
                                       target_columns=["target"])
-  repr(sequence_sample)
+  print(repr(sequence_sample))
