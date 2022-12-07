@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from datetime import timedelta
 
 import os
-from bdi_predict.params import BASE_PROJECT_PATH
+from bdi_predict.model.params import BASE_PROJECT_PATH
 
 
 def clean_data(to_csv=True) -> pd.DataFrame:
@@ -20,7 +20,7 @@ def clean_data(to_csv=True) -> pd.DataFrame:
     print("Loading data.")
     
      
-    bdi_path =  os.path.join(BASE_PROJECT_PATH, "raw_data", "BDI_daily.csv")
+    bdi_path = os.path.join(BASE_PROJECT_PATH, "raw_data", "BDI_daily.csv")
     bdi = pd.read_csv(bdi_path)
     bdi["time"].astype(int)
     bdi["time"] = pd.to_datetime(bdi["time"], unit="s", origin="unix")
