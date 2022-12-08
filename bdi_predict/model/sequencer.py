@@ -63,6 +63,7 @@ class SequenceGenerator():
         f'Input indices: {self.input_index}',
         f'Label indices: {self.target_index}',
         f'Label column name(s): {self.target_columns}'])
+
     
     
 if __name__ == "__main__":
