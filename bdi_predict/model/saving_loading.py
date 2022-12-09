@@ -9,7 +9,7 @@ import glob
 import mlflow
 
 
-from bdi_predict.ml_logic.params import LOCAL_REGISTRY_PATH, API_DATA_PATH
+from bdi_predict.model.params import LOCAL_REGISTRY_PATH, API_DATA_PATH
 
 
 def save_model(model: Model = None,
@@ -94,7 +94,7 @@ def load_model(save_copy_locally=False) -> Model:
     """
     load the latest saved model, return None if no model found
     """
-    print("\nLoad model from local disk...")
+    print("\nLoading model from local disk...")
 
     # get latest model version
     model_directory = os.path.join(LOCAL_REGISTRY_PATH, "models")
@@ -122,7 +122,7 @@ def load_data() -> pd.DataFrame:
     # Getting data with relative registry path:
     
     data_directory = API_DATA_PATH
-    df = pd.read_csv(f"{data_directory}/cip_model_data.csv")
+    df = pd.read_csv(f"{data_directory}/cleaned_data.csv")
 
     return df
     

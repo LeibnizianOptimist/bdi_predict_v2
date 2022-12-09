@@ -1,6 +1,7 @@
 data/
 .env
 notebooks/
+training_outputs/
 mlruns
 .envrc
 Makefile
