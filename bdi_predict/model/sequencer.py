@@ -1,6 +1,8 @@
 import os
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
+import tensorflow as tf
 
 from bdi_predict.model.params import BASE_PROJECT_PATH
 from bdi_predict.model.preprocessor import train_val_test_split, min_max_scaler
@@ -8,17 +10,24 @@ from bdi_predict.model.preprocessor import train_val_test_split, min_max_scaler
 
 class SequenceGenerator():
   """
-  
+  Generates the required data structure (Sequence Tensors) on which the LSTM model is trained on.
   """
   
-  def __init__(self, input_width:int,
+  
+  
+  def __init__(self, 
+               input_width:int,
                target_width:int,
                offset:int,
                df_train:pd.DataFrame,
                df_val:pd.DataFrame,
                df_test:pd.DataFrame,
                target_columns=None
-               ): 
+               ):
+    
+    """
+    Initilises generator with required variables and elements.
+    """ 
     
     #Stores the data required prior to manipulation via instance methods.
     
@@ -46,23 +55,123 @@ class SequenceGenerator():
   
     self.offset = offset
 
-    self.total_window_size = input_width + offset
+    self.total_sequence_size = input_width + offset
 
-  
   
     self.input_slice = slice(0, input_width)
-    self.input_index = np.arange(self.total_window_size)[self.input_slice]
+    self.input_index = np.arange(self.total_sequence_size)[self.input_slice]
 
-    self.target_start = self.total_window_size - self.target_width
+    self.target_start = self.total_sequence_size - self.target_width
     self.target_slice = slice(self.target_start, None)
-    self.target_index = np.arange(self.total_window_size)[self.target_slice]
+    self.target_index = np.arange(self.total_sequence_size)[self.target_slice]
+
+
 
   def __repr__(self):
     return '\n'.join([
-        f'Total window size: {self.total_window_size}',
+        f'Total sequence size: {self.total_sequence_size}',
         f'Input indices: {self.input_index}',
         f'Label indices: {self.target_index}',
         f'Label column name(s): {self.target_columns}'])
+   
+    
+    
+  def split_sequence(self,
+                     features:pd.DataFrame
+                     ):
+    """
+    This instance method converts a list of consecutive input into seperate sequence of inputs with a corresponding seperate sequence of labels.
+    """
+    
+    inputs = features[:, self.input_slice, :]
+    targets = features[: self.target_slice, :]
+    
+    if self.target_columns != None:
+      targets = tf.stack(
+        [targets[:, :, self.column_index[name]] for name in self.target_columns], 
+        axis= -1
+      )
+  
+  #Slicing doesn't preserve static shape information, so set the shapes manually.
+  #This way the `tf.data.Datasets` are easier to inspect.
+    inputs.set_shape([None, self.input_width, None])
+    targets.set_shape([None, self.label_width, None])
+    
+    #Shape of the np.ndarray should be (#Number of batches, #Number of observations, #Number of features)
+    
+    return inputs, targets
+  
+  
+  
+  def plot(self, model=None,
+           plot_col="target",
+           max_subplots=3
+           ):
+    """
+    Visualises a split sequence created by the split_sequence method above.
+    """
+    inputs, targets = self.example
+    
+    plt.figure(figsize=(12, 8))
+    plot_col_index = self.column_indices[plot_col]
+    max_n = min(max_subplots, len(inputs))
+    
+    for n in range(max_n):
+      plt.subplot(max_n, 1, n+1)
+      plt.ylabel(f'{plot_col} [normalised]')
+      plt.plot(self.input_indices, inputs[n, :, plot_col_index],
+              label='Inputs', marker='.', zorder=-10)
+
+      if self.label_columns:
+        label_col_index = self.label_columns_indices.get(plot_col, None)
+      
+      else:
+        label_col_index = plot_col_index
+        
+
+      if label_col_index is None:
+        continue
+
+      plt.scatter(self.label_indices, targets[n, :, label_col_index],
+                  edgecolors='k', label='targets', c='#2ca02c', s=64)
+      
+      if model is not None:
+        predictions = model(inputs)
+        
+        plt.scatter(self.label_indices, predictions[n, :, label_col_index],
+                    marker='X', edgecolors='k', label='Predictions',
+                    c='#ff7f0e', s=64)
+
+      if n == 0:
+        plt.legend()
+
+    plt.xlabel('Time [h]')
+    
+    return None
+  
+  
+  
+  def make_dataset(self, 
+                   data
+                   ):
+    """
+    
+    """
+
+    data = np.array(data, dtype=np.float32)
+    ds = tf.keras.utils.timeseries_dataset_from_array(
+        data=data,
+        targets=None,
+        sequence_length=self.total_window_size,
+        sequence_stride=1,
+        shuffle=True,
+        batch_size=32,)
+
+    ds = ds.map(self.split_window)
+
+    return ds
+    
+    
 
     
     
@@ -84,3 +193,21 @@ if __name__ == "__main__":
                                       df_test=df_test, 
                                       target_columns=["target"])
   print(repr(sequence_sample))
+  
+    # Stack three slices, the length of the total window.
+  example_sequence = tf.stack([np.array(df_train[:sequence_sample.total_sequence_size]),
+                            np.array(df_train[100:100+sequence_sample.total_sequence_size]),
+                            np.array(df_train[200:200+sequence_sample.total_sequence_size])])
+
+  example_inputs, example_labels = sequence_sample.split_window(example_sequence)
+
+  print('All shapes are: (batch, time, features)')
+  print(f'Window shape: {example_sequence.shape}')
+  print(f'Inputs shape: {example_inputs.shape}')
+  print(f'Labels shape: {example_labels.shape}')
+  
+  
+  #Show off the plots/visualisations of the sequences fucniton here when you run the file!
+  
+
+
