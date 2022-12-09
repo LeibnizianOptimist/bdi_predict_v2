@@ -7,6 +7,7 @@ import tensorflow as tf
 from bdi_predict.model.params import BASE_PROJECT_PATH
 from bdi_predict.model.preprocessor import train_val_test_split, min_max_scaler
 
+#Custom class based on tf's WindowGenerator. 
 
 class SequenceGenerator():
   """
