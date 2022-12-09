@@ -152,14 +152,16 @@ class SequenceGenerator():
   
   
   def make_dataset(self, 
-                   data
+                   data:pd.DataFrame
                    ):
     """
-    
+    Creates datasets to be passed into the Keras model. This is done by calling
+    the timeseries_dataset_from_array tf.keras function which "creates a dataset of sliding windows over a timeseries
+    provided as an array". The kwarg "data" should take in a timesreies pd.DataFrame created from split_sequence instance method above.
     """
 
-    data = np.array(data, dtype=np.float32)
-    ds = tf.keras.utils.timeseries_dataset_from_array(
+    data = np.array(data, dtype=np.float64)
+    ds = tf.keras.utils.timeseries_datset_from_array(
         data=data,
         targets=None,
         sequence_length=self.total_window_size,
@@ -168,12 +170,39 @@ class SequenceGenerator():
         batch_size=32,)
 
     ds = ds.map(self.split_window)
+    
+    
 
     return ds
-    
+  
+  
+  #Next three fucntions are properties that allows us to access the df_train, df_val, and df_test as tf.data.Datasets
+  #using the make_dataset method defined above. Final @property decorated method creates a standard example batch for easy access and plotting.
+  
+  @property
+  def train(self):
+    return self.make_dataset(self.df_train)
+
+  @property
+  def val(self):
+    return self.make_dataset(self.df_val)
+
+  @property
+  def test(self):
+    return self.make_dataset(self.df_test)
+
+  @property
+  def example(self):
+    """Get and cache an example batch of `inputs, labels` for plotting."""
+    result = getattr(self, '_example', None)
+    if result is None:
+      # No example batch was found, so get one from the `.train` dataset
+      result = next(iter(self.train))
+      # And cache it for next time
+      self._example = result
+    return result
     
 
-    
     
 if __name__ == "__main__":
   
@@ -202,7 +231,7 @@ if __name__ == "__main__":
   example_inputs, example_labels = sequence_sample.split_window(example_sequence)
 
   print('All shapes are: (batch, time, features)')
-  print(f'Window shape: {example_sequence.shape}')
+  print(f'Sequence shape: {example_sequence.shape}')
   print(f'Inputs shape: {example_inputs.shape}')
   print(f'Labels shape: {example_labels.shape}')
   
