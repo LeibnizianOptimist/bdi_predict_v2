@@ -1,4 +1,4 @@
-## Model Process
+# Model Process
 
 1. Clean raw data using the data.py functions. This stores the data in the data/ directory.
 2. Preprocess the data in preparation to be fed into a tensorflow.keras model using the functions in preprocessor.py and sequencer.py file. The preprocessing goes as follows:
