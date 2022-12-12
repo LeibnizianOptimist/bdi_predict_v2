@@ -12,11 +12,14 @@ matplotlib
 seaborn
 notebook
 
-#Pytorch
+#Tensorflow 
 
-torch
-torchvision
-torchaudio
+tensorflow-macos
+tensorflow-metal
+
+#torch
+#torchvision
+#torchaudio
 
 # tests/linter
 black

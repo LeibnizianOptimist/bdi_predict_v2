@@ -1,3 +1,5 @@
+import matplotlib.pyplot as plt
+
 from tensorflow import keras, data
 
 from keras import Model, Sequential, layers
@@ -27,7 +29,7 @@ def init_model() -> Model:
     
     model.add(layers.LSTM(60,
                           activation="tanh",
-                          input_shape=(20,1),
+                          input_shape=(20,2),
                           return_sequences=False))
 
     #DENSE LAYERS:
@@ -87,3 +89,33 @@ def train_model(model: Model,
     print(f"\nmodel trained ({len(XandY)} rows).")
      
     return model, history
+
+
+def plot_history(history):
+    """
+    Plots the learning curves.
+    """
+    
+    fig, ax = plt.subplots(1,2, figsize=(20,7))
+    # Loss:MSE
+    ax[0].plot(history.history['loss'])
+    ax[0].plot(history.history['val_loss'])
+    ax[0].set_title('MSE')
+    ax[0].set_ylabel('Loss')
+    ax[0].set_xlabel('Epoch')
+    ax[0].legend(['Train', 'Validation'], loc='best')
+    ax[0].grid(axis="x",linewidth=0.5)
+    ax[0].grid(axis="y",linewidth=0.5)
+    
+    # Metrics:MAE
+    
+    ax[1].plot(history.history['mae'])
+    ax[1].plot(history.history['val_mae'])
+    ax[1].set_title('MAE')
+    ax[1].set_ylabel('MAE')
+    ax[1].set_xlabel('Epoch')
+    ax[1].legend(['Train', 'Validation'], loc='best')
+    ax[1].grid(axis="x",linewidth=0.5)
+    ax[1].grid(axis="y",linewidth=0.5)
+                        
+    return ax

@@ -15,7 +15,6 @@ class SequenceGenerator():
   """
   
   
-  
   def __init__(self, 
                input_width:int,
                target_width:int,
