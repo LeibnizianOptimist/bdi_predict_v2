@@ -7,13 +7,13 @@ import tensorflow as tf
 from bdi_predict.model.params import BASE_PROJECT_PATH
 from bdi_predict.model.preprocessor import train_val_test_split, min_max_scaler
 
-#Custom class based on tf's WindowGenerator. 
+#Custom class based off of tf's WindowGenerator. 
 
 class SequenceGenerator():
   """
   Generates the required data structure (Sequence Tensors) on which the LSTM model is trained on.
   """
-  
+
   
   def __init__(self, 
                input_width:int,
@@ -57,6 +57,8 @@ class SequenceGenerator():
 
     self.total_sequence_size = input_width + offset
 
+  #The first number in the slice() function represents the number batche_size (the number of sequences) that will passed into 
+  #the LSTM model that will then try and optimise on.
   
     self.input_slice = slice(0, input_width)
     self.input_index = np.arange(self.total_sequence_size)[self.input_slice]
@@ -71,20 +73,23 @@ class SequenceGenerator():
     return '\n'.join([
         f'Total sequence size: {self.total_sequence_size}',
         f'Input indices: {self.input_index}',
-        f'Label indices: {self.target_index}',
-        f'Label column name(s): {self.target_columns}'])
+        f'Target indice(s): {self.target_index}',
+        f'Target column name(s): {self.target_columns}'])
    
     
     
   def split_sequence(self,
-                     features:pd.DataFrame
+                     features:tf.Tensor
                      ):
     """
-    This instance method converts a list of consecutive input into seperate sequence of inputs with a corresponding seperate sequence of labels.
+    This instance method converts a list of consecutive inputs 
+    into a seperate sequence of inputs with a corresponding seperate sequence of targets.
+    It takes an an input a tf.Tensor wherein each row represents a single sequence that constitue a batch fed to the 
+    LSTM model. 
     """
     
-    inputs = features[:, self.input_slice, :]
-    targets = features[: self.target_slice, :]
+    inputs = df[:, self.input_slice, :]
+    targets = df[: self.target_slice, :]
     
     if self.target_columns != None:
       targets = tf.stack(
@@ -164,12 +169,12 @@ class SequenceGenerator():
     ds = tf.keras.utils.timeseries_datset_from_array(
         data=data,
         targets=None,
-        sequence_length=self.total_window_size,
+        sequence_length=self.total_sequence_size,
         sequence_stride=1,
         shuffle=True,
         batch_size=32,)
 
-    ds = ds.map(self.split_window)
+    ds = ds.map(self.split_sequence)
     
     
 
@@ -228,7 +233,7 @@ if __name__ == "__main__":
                             np.array(df_train[100:100+sequence_sample.total_sequence_size]),
                             np.array(df_train[200:200+sequence_sample.total_sequence_size])])
 
-  example_inputs, example_labels = sequence_sample.split_window(example_sequence)
+  example_inputs, example_labels = sequence_sample.split_sequence(example_sequence)
 
   print('All shapes are: (batch, time, features)')
   print(f'Sequence shape: {example_sequence.shape}')

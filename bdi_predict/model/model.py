@@ -1,14 +1,12 @@
+#For plot_history function
 import matplotlib.pyplot as plt
 
+#Tensorflow imports
 from tensorflow import keras, data
-
 from keras import Model, Sequential, layers
-
 from keras.callbacks import EarlyStopping
-
 from keras.optimizers import RMSprop
 from keras.optimizers.schedules import ExponentialDecay
-
 from data import Dataset
 
 # FOR TYPE HINTS

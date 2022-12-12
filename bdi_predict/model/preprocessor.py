@@ -28,7 +28,7 @@ def train_val_test_split(df:pd.DataFrame,
     val_ratio = train_val_test_ratio[1]*0.1
     test_ratio = train_val_test_ratio[2]*0.1
     
-    print(round(train_ratio+val_ratio+test_ratio))
+    #print(round(train_ratio+val_ratio+test_ratio))
     
     # TRAIN SET
     
