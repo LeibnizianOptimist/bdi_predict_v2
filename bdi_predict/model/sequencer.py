@@ -88,8 +88,8 @@ class SequenceGenerator():
     LSTM model. 
     """
     
-    inputs = df[:, self.input_slice, :]
-    targets = df[: self.target_slice, :]
+    inputs = features[:, self.input_slice, :]
+    targets = features[: self.target_slice, :]
     
     if self.target_columns != None:
       targets = tf.stack(
