@@ -89,7 +89,7 @@ class SequenceGenerator():
     """
     
     inputs = features[:, self.input_slice, :]
-    targets = features[: self.target_slice, :]
+    targets = features[:, self.target_slice, :]
     
     if self.target_columns != None:
       targets = tf.stack(
@@ -100,7 +100,7 @@ class SequenceGenerator():
   #Slicing doesn't preserve static shape information, so set the shapes manually.
   #This way the `tf.data.Datasets` are easier to inspect.
     inputs.set_shape([None, self.input_width, None])
-    targets.set_shape([None, self.label_width, None])
+    targets.set_shape([None, self.target_width, None])
     
     #Shape of the np.ndarray should be (#Number of batches, #Number of observations, #Number of features)
     
