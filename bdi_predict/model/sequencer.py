@@ -162,11 +162,10 @@ class SequenceGenerator():
     """
     Creates datasets to be passed into the Keras model. This is done by calling
     the timeseries_dataset_from_array tf.keras function which "creates a dataset of sliding windows over a timeseries
-    provided as an array". The kwarg "data" should take in a timesreies pd.DataFrame created from split_sequence instance method above.
-    """
+    provided as an array". The kwarg "data" should take in a timesreies pd.DataFrame and applies the split_sequence method"""
 
     data = np.array(data, dtype=np.float64)
-    ds = tf.keras.utils.timeseries_datset_from_array(
+    ds = tf.keras.utils.timeseries_dataset_from_array(
         data=data,
         targets=None,
         sequence_length=self.total_sequence_size,
