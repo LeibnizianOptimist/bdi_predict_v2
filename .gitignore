@@ -1,6 +1,6 @@
 data/
 .env
-notebooks/inessential _notebooks/
+notebooks/inessential_notebooks/
 training_outputs/
 mlruns
 .envrc
